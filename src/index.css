@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bg text-white font-mono;
+    background-image:
+      linear-gradient(rgba(200,245,58,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,245,58,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface border border-border rounded-xl overflow-hidden;
+  }
+
+  .card-header {
+    @apply flex items-center justify-between px-6 py-4 border-b border-border;
+  }
+
+  .card-title {
+    @apply font-display font-bold text-sm tracking-tight;
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer;
+  }
+
+  .btn-accent {
+    @apply btn bg-accent text-bg hover:bg-accent/90 active:scale-95;
+  }
+
+  .btn-ghost {
+    @apply btn bg-surface2 border border-border text-white hover:border-accent/50 active:scale-95;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-full font-medium tracking-wide;
+  }
+
+  .badge-completed { @apply badge bg-success/10 text-success; }
+  .badge-in_progress { @apply badge bg-accent/10 text-accent; }
+  .badge-requested { @apply badge bg-accent2/10 text-accent2; }
+  .badge-cancelled { @apply badge bg-accent3/10 text-accent3; }
+  .badge-accepted { @apply badge bg-warning/10 text-warning; }
+  .badge-active { @apply badge bg-success/10 text-success; }
+  .badge-busy { @apply badge bg-accent/10 text-accent; }
+  .badge-offline { @apply badge bg-muted/20 text-muted; }
+
+  .input {
+    @apply w-full bg-surface2 border border-border rounded-lg px-3 py-2 text-xs text-white placeholder-muted outline-none focus:border-accent/60 transition-colors font-mono;
+  }
+
+  .stat-val {
+    @apply font-display font-extrabold text-3xl leading-none text-white;
+  }
+
+  .stat-label {
+    @apply text-[10px] uppercase tracking-widest text-muted;
+  }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px currentColor; opacity: 1; }
+  50%       { box-shadow: 0 0 20px currentColor; opacity: 0.7; }
+}
+
+.animate-fade-up { animation: fadeUp 0.4s ease both; }
+.animate-pulse-glow { animation: pulse-glow 2s infinite; }

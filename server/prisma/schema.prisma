@@ -1,0 +1,176 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  rider
+  driver
+  admin
+  @@map("user_role")
+}
+
+enum DriverStatus {
+  active
+  busy
+  offline
+  @@map("driver_status")
+}
+
+enum RideStatus {
+  requested
+  accepted
+  in_progress
+  completed
+  cancelled
+  @@map("ride_status")
+}
+
+enum PaymentMethod {
+  card
+  cash
+  wallet
+  @@map("payment_method")
+}
+
+enum PaymentStatus {
+  pending
+  completed
+  failed
+  @@map("payment_status")
+}
+
+enum DiscountType {
+  percentage
+  fixed
+  @@map("discount_type")
+}
+
+model User {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email           String            @unique
+  full_name       String
+  phone           String?
+  role            UserRole          @default(rider)
+  avatar_url      String?
+  rating          Decimal?          @db.Decimal(3, 2)
+  is_verified     Boolean?          @default(false)
+  deleted_at      DateTime?         @db.Timestamptz
+  created_at      DateTime?         @default(now()) @db.Timestamptz
+  updated_at      DateTime?         @default(now()) @db.Timestamptz
+
+  driver_profile  DriverProfile[]
+  rides_as_rider  RideRequest[]     @relation("Rider")
+  rides_as_driver RideRequest[]     @relation("Driver")
+  payments        Payment[]
+  wallets         Wallet[]
+
+  @@map("users")
+}
+
+model DriverProfile {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id         String    @db.Uuid
+  license_number  String
+  license_expiry  DateTime  @db.Date
+  status          DriverStatus @default(offline)
+  current_lat     Decimal?  @db.Decimal(9, 6)
+  current_lng     Decimal?  @db.Decimal(9, 6)
+  total_rides     Int?      @default(0)
+  vehicle_make    String?
+  vehicle_model   String?
+  vehicle_type    String?
+  plate_number    String?
+  created_at      DateTime? @default(now()) @db.Timestamptz
+  updated_at      DateTime? @default(now()) @db.Timestamptz
+
+  user            User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("driver_profiles")
+}
+
+model PromoCode {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code            String         @unique
+  discount_type   DiscountType
+  discount_value  Decimal        @db.Decimal(12, 2)
+  min_ride_amount Decimal?       @default(0) @db.Decimal(12, 2)
+  max_uses        Int?           @default(0)
+  uses_count      Int?           @default(0)
+  expires_at      DateTime?      @db.Timestamptz
+  is_active       Boolean?       @default(true)
+  created_at      DateTime?      @default(now()) @db.Timestamptz
+  updated_at      DateTime?      @default(now()) @db.Timestamptz
+
+  ride_requests   RideRequest[]
+
+  @@map("promo_codes")
+}
+
+model RideRequest {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  rider_id        String         @db.Uuid
+  driver_id       String?        @db.Uuid
+  promo_code_id   String?        @db.Uuid
+  origin_lat      Decimal        @db.Decimal(9, 6)
+  origin_lng      Decimal        @db.Decimal(9, 6)
+  origin_address  String
+  dest_lat        Decimal        @db.Decimal(9, 6)
+  dest_lng        Decimal        @db.Decimal(9, 6)
+  dest_address    String
+  status          RideStatus     @default(requested)
+  vehicle_type    String?
+  base_fare       Decimal?       @db.Decimal(12, 2)
+  discount_amount Decimal?       @default(0) @db.Decimal(12, 2)
+  final_fare      Decimal?       @db.Decimal(12, 2)
+  distance_km     Decimal?       @db.Decimal(6, 2)
+  duration_minutes Int?
+  accepted_at     DateTime?      @db.Timestamptz
+  started_at      DateTime?      @db.Timestamptz
+  completed_at    DateTime?      @db.Timestamptz
+  cancelled_at    DateTime?      @db.Timestamptz
+  cancel_reason   String?
+  created_at      DateTime?      @default(now()) @db.Timestamptz
+  updated_at      DateTime?      @default(now()) @db.Timestamptz
+
+  promo_code      PromoCode?     @relation(fields: [promo_code_id], references: [id], onDelete: SetNull)
+  rider           User           @relation("Rider", fields: [rider_id], references: [id], onDelete: Restrict)
+  driver          User?          @relation("Driver", fields: [driver_id], references: [id], onDelete: SetNull)
+  payments        Payment[]
+
+  @@map("ride_requests")
+}
+
+model Payment {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ride_id         String         @db.Uuid
+  user_id         String         @db.Uuid
+  amount          Decimal        @db.Decimal(12, 2)
+  method          PaymentMethod
+  status          PaymentStatus  @default(pending)
+  gateway_ref     String?
+  paid_at         DateTime?      @db.Timestamptz
+  created_at      DateTime?      @default(now()) @db.Timestamptz
+  updated_at      DateTime?      @default(now()) @db.Timestamptz
+
+  ride_request    RideRequest    @relation(fields: [ride_id], references: [id], onDelete: Restrict)
+  user            User           @relation(fields: [user_id], references: [id], onDelete: Restrict)
+
+  @@map("payments")
+}
+
+model Wallet {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id         String         @db.Uuid
+  balance         Decimal?       @default(0) @db.Decimal(12, 2)
+  currency        String?        @default("GHS")
+  created_at      DateTime?      @default(now()) @db.Timestamptz
+  updated_at      DateTime?      @default(now()) @db.Timestamptz
+
+  user            User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("wallets")
+}
