@@ -33,8 +33,11 @@ app.use('/api/payments', paymentsRoutes);
 app.use('/api/promos', promosRoutes);
 app.use('/api/users', usersRoutes);
 
-const PORT = process.env.PORT || 3001;
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+export default app;
