@@ -15,7 +15,7 @@ export default function Riders() {
   const RIDES = ridesApi || [];
 
   const riders = USERS.filter((u: any) => u.role === 'rider');
-  const filtered = riders.filter(u =>
+  const filtered = riders.filter((u: any) =>
     !q || u.full_name.toLowerCase().includes(q.toLowerCase()) ||
     u.email.toLowerCase().includes(q.toLowerCase())
   );
@@ -40,8 +40,8 @@ export default function Riders() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(u => {
-                const rideCount = RIDES.filter(r => r.rider_id === u.id).length;
+              {filtered.map((u: any) => {
+                const rideCount = RIDES.filter((r: any) => r.rider_id === u.id).length;
                 return (
                   <tr key={u.id} className="border-b border-border/40 last:border-0 hover:bg-surface2 transition-colors cursor-pointer">
                     <td className="px-6 py-4">

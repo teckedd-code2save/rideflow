@@ -41,7 +41,7 @@ export default function Analytics() {
                 <YAxis tick={{ fill: '#5a5a72', fontSize: 10, fontFamily: 'DM Mono' }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={{ background: '#111118', border: '1px solid #222230', borderRadius: 8, fontSize: 11 }} formatter={(v: number) => [fmtGHS(v), 'Revenue']} />
                 <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
-                  {REVENUE_CHART.map((_, i) => (
+                  {REVENUE_CHART.map((_: any, i: number) => (
                     <Cell key={i} fill={i === REVENUE_CHART.length - 1 ? '#c8f53a' : '#222230'} />
                   ))}
                 </Bar>

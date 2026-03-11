@@ -25,13 +25,13 @@ export default function Rides() {
   if (isLoading) return <div className="text-muted p-8 text-center animate-pulse">Loading rides...</div>;
 
   const filtered = RIDES
-    .filter(r => tab === 'all' || r.status === tab)
-    .filter(r =>
+    .filter((r: any) => tab === 'all' || r.status === tab)
+    .filter((r: any) =>
       !q || [r.rider_name, r.driver_name, r.origin_address, r.dest_address].some(
         f => f?.toLowerCase().includes(q.toLowerCase())
       )
     )
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   return (
     <div className="space-y-4 animate-fade-up">
@@ -47,7 +47,7 @@ export default function Rides() {
             >
               {t.label}
               <span className="ml-1.5 text-[10px] opacity-60">
-                {t.value === 'all' ? RIDES.length : RIDES.filter(r => r.status === t.value).length}
+                {t.value === 'all' ? RIDES.length : RIDES.filter((r: any) => r.status === t.value).length}
               </span>
             </button>
           ))}
@@ -69,7 +69,7 @@ export default function Rides() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(ride => (
+              {filtered.map((ride: any) => (
                 <tr key={ride.id} className="border-b border-border/40 last:border-0 hover:bg-surface2 transition-colors cursor-pointer">
                   <td className="px-6 py-3.5 text-xs font-medium">{ride.rider_name}</td>
                   <td className="px-6 py-3.5 text-xs text-muted">{ride.driver_name ?? <span className="italic">Unassigned</span>}</td>

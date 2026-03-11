@@ -24,9 +24,9 @@ export default function Payments() {
   const PAYMENTS = paymentsApi || [];
 
   const filtered = PAYMENTS
-    .filter(p => tab === 'all' || p.status === tab)
-    .filter(p => !q || p.rider_name?.toLowerCase().includes(q.toLowerCase()) || p.gateway_ref?.toLowerCase().includes(q.toLowerCase()))
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    .filter((p: any) => tab === 'all' || p.status === tab)
+    .filter((p: any) => !q || p.rider_name?.toLowerCase().includes(q.toLowerCase()) || p.gateway_ref?.toLowerCase().includes(q.toLowerCase()))
+    .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   const totalRevenue = PAYMENTS.filter((p: any) => p.status === 'completed').reduce((s: number, p: any) => s + Number(p.amount), 0);
 

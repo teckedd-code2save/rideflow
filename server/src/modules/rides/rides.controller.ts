@@ -27,3 +27,33 @@ export const getRecentRides = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+export const getRideById = async (req: Request, res: Response) => {
+    try {
+        const ride = await prisma.rideRequest.findUnique({
+            where: { id: req.params.id as string },
+            include: {
+                rider: { select: { full_name: true } },
+                driver: { select: { full_name: true } }
+            }
+        });
+
+        if (!ride) {
+            return res.status(404).json({ error: 'Ride not found' });
+        }
+
+        res.json({
+            id: ride.id,
+            rider_name: ride.rider.full_name,
+            driver_name: ride.driver ? ride.driver.full_name : null,
+            origin_address: ride.origin_address,
+            dest_address: ride.dest_address,
+            final_fare: ride.final_fare,
+            status: ride.status,
+            created_at: ride.created_at
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};

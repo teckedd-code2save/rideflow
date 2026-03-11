@@ -14,7 +14,7 @@ export default function Drivers() {
   const DRIVERS = driversApi || [];
   const RIDES = ridesApi || [];
 
-  const filtered = DRIVERS.filter(d =>
+  const filtered = DRIVERS.filter((d: any) =>
     !q || d.full_name?.toLowerCase().includes(q.toLowerCase()) ||
     d.license_number.toLowerCase().includes(q.toLowerCase())
   );
@@ -39,8 +39,8 @@ export default function Drivers() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(d => {
-                const driverRides = RIDES.filter(r => r.driver_id === d.user_id);
+              {filtered.map((d: any) => {
+                const driverRides = RIDES.filter((r: any) => r.driver_id === d.user_id);
                 return (
                   <tr key={d.id} className="border-b border-border/40 last:border-0 hover:bg-surface2 transition-colors cursor-pointer">
                     <td className="px-6 py-4">
